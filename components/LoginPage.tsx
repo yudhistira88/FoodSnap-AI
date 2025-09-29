@@ -19,7 +19,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       return;
     }
     // Check for specific credentials
-    if (email === 'yudhistira.andri.n@gmail.com' && password === 'yamakasi88') {
+    if (
+      (email === 'yudhistira.andri.n@gmail.com' && password === 'yamakasi88') ||
+      (email === 'nicholas.bintoro@gmail.com' && password === '12345')
+    ) {
       setError('');
       onLogin();
     } else {
