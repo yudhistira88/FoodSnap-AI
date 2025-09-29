@@ -38,7 +38,7 @@ const App: React.FC = () => {
       setAnalysisResult(result);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Terjadi kesalahan yang tidak diketahui.";
-      setError(`Gagal menganalisis gambar. Penyebab: ${errorMessage}`);
+      setError(errorMessage);
       console.error(err);
     } finally {
       setIsLoading(false);

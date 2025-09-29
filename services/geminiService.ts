@@ -9,6 +9,16 @@ if (!API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
+// Schema for the initial food check
+const foodCheckSchema = {
+    type: Type.OBJECT,
+    properties: {
+        isFood: { type: Type.BOOLEAN, description: "True if the image contains edible food or a drink." },
+        reason: { type: Type.STRING, description: "Reason for rejection if not food." }
+    },
+    required: ['isFood', 'reason']
+};
+
 const responseSchema = {
     type: Type.OBJECT,
     properties: {
@@ -131,9 +141,45 @@ const responseSchema = {
     required: ["foodName", "recipe", "nutrition", "healthAnalysis", "smartTips", "servingSuggestion", "consumptionSuggestion", "consumptionTime", "flavorProfile", "foodPairing"]
 };
 
+const isFoodImage = async (base64Image: string): Promise<{ isFood: boolean; reason: string }> => {
+    const imagePart = {
+        inlineData: {
+            mimeType: 'image/jpeg',
+            data: base64Image,
+        },
+    };
+
+    const textPart = {
+       text: `You are a strict food detection system. Your only task is to determine if the image contains edible food or a drink.
+- If the image contains humans, animals, landscapes, non-food objects, buildings, or religious activities, it is NOT food.
+- Respond ONLY with JSON that adheres to the provided schema.
+- If it IS food or a drink, set "isFood" to true and "reason" to an empty string.
+- If it is NOT food or a drink, set "isFood" to false and "reason" must be exactly this string: "Foto ini bukan makanan. Silakan unggah foto makanan atau minuman."`
+    };
+
+    const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: { parts: [imagePart, textPart] },
+        config: {
+            responseMimeType: "application/json",
+            responseSchema: foodCheckSchema,
+        }
+    });
+
+    const jsonText = response.text.trim();
+    return JSON.parse(jsonText);
+};
+
 
 export const analyzeFoodImage = async (base64Image: string): Promise<FoodData> => {
     try {
+        // Step 1: Check if the image is food
+        const foodCheck = await isFoodImage(base64Image);
+        if (!foodCheck.isFood) {
+            throw new Error(foodCheck.reason || "Tidak ditemukan makanan pada foto.");
+        }
+
+        // Step 2: If it is food, proceed with the detailed analysis
         const imagePart = {
             inlineData: {
                 mimeType: 'image/jpeg',
@@ -174,7 +220,7 @@ export const analyzeFoodImage = async (base64Image: string): Promise<FoodData> =
     } catch (error) {
         console.error("Error analyzing food image with Gemini:", error);
         if (error instanceof Error) {
-            throw new Error(`Failed to analyze image: ${error.message}`);
+            throw new Error(error.message);
         }
         throw new Error("An unknown error occurred while analyzing the image.");
     }
