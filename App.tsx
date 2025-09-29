@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback } from 'react';
 import Header from './components/Header';
 import ImageUpload from './components/ImageUpload';
@@ -7,6 +8,7 @@ import ResultDisplay from './components/ResultDisplay';
 import LoginPage from './components/LoginPage';
 import { analyzeFoodImage } from './services/geminiService';
 import type { FoodData } from './types';
+import AnalysisFailure from './components/AnalysisFailure';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -86,7 +88,7 @@ const App: React.FC = () => {
           
           <div className="w-full mt-10">
             {isLoading && <Loader />}
-            {error && <div className="text-center p-4 bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-300 rounded-lg">{error}</div>}
+            {error && <AnalysisFailure message={error} />}
             {analysisResult && <ResultDisplay data={analysisResult} imageBase64={imageBase64} />}
           </div>
 
