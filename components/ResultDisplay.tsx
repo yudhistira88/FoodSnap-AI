@@ -33,10 +33,22 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ data, imageBase64 }) => {
       const pdfContentElement = pdfContainer.firstChild as HTMLElement;
       if (!pdfContentElement) throw new Error("PDF content element not found.");
 
-      const canvas = await html2canvas(pdfContentElement, { scale: 2, useCORS: true, windowWidth: pdfContentElement.scrollWidth, windowHeight: pdfContentElement.scrollHeight });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width, canvas.height] });
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      const canvas = await html2canvas(pdfContentElement, { 
+        scale: 1.5, // Lowered scale for smaller file size
+        useCORS: true, 
+        windowWidth: pdfContentElement.scrollWidth, 
+        windowHeight: pdfContentElement.scrollHeight 
+      });
+      
+      // Use JPEG format with quality compression
+      const imgData = canvas.toDataURL('image/jpeg', 0.85);
+      const pdf = new jsPDF({ 
+        orientation: 'p', 
+        unit: 'px', 
+        format: [canvas.width, canvas.height] 
+      });
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'MEDIUM');
       pdf.save(`${data.foodName.replace(/\s+/g, '-')}-analysis.pdf`);
     } catch (error) {
       console.error("Error generating PDF:", error);
