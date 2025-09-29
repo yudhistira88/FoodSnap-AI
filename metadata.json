@@ -1,0 +1,7 @@
+{
+  "name": "FoodSnap AI",
+  "description": "An AI-powered application that identifies food from a photo and provides its recipe and nutritional information.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
