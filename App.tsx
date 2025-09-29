@@ -22,6 +22,13 @@ const App: React.FC = () => {
     setAnalysisResult(null);
     setError(null);
   }, []);
+
+  const handleReset = useCallback(() => {
+    setImageBase64(null);
+    setAnalysisResult(null);
+    setError(null);
+    setIsLoading(false);
+  }, []);
   
   const handleAnalyzeClick = async () => {
     if (!imageBase64) {
@@ -74,7 +81,7 @@ const App: React.FC = () => {
           <div className="w-full max-w-2xl bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg dark:shadow-2xl dark:shadow-slate-950/20">
             <div className="space-y-6 flex flex-col items-center">
               <ImageUpload onImageSelect={handleImageSelect} imagePreviewUrl={imageBase64} />
-              {imageBase64 && (
+              {imageBase64 && !analysisResult && !error && (
                 <button
                   onClick={handleAnalyzeClick}
                   disabled={isLoading}
@@ -88,8 +95,8 @@ const App: React.FC = () => {
           
           <div className="w-full mt-10">
             {isLoading && <Loader />}
-            {error && <AnalysisFailure message={error} />}
-            {analysisResult && <ResultDisplay data={analysisResult} imageBase64={imageBase64} />}
+            {error && <AnalysisFailure message={error} onReset={handleReset} />}
+            {analysisResult && <ResultDisplay data={analysisResult} imageBase64={imageBase64} onReset={handleReset} />}
           </div>
 
         </div>

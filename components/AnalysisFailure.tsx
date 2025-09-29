@@ -3,9 +3,10 @@ import Icon from './Icon';
 
 interface AnalysisFailureProps {
   message: string;
+  onReset: () => void;
 }
 
-const AnalysisFailure: React.FC<AnalysisFailureProps> = ({ message }) => {
+const AnalysisFailure: React.FC<AnalysisFailureProps> = ({ message, onReset }) => {
   return (
     <div className="w-full bg-red-50 dark:bg-slate-800 border border-red-200 dark:border-red-900/50 p-6 rounded-2xl shadow-lg dark:shadow-2xl dark:shadow-slate-950/20 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -27,6 +28,15 @@ const AnalysisFailure: React.FC<AnalysisFailureProps> = ({ message }) => {
           <li>Pastikan objek utama dalam foto adalah makanan.</li>
           <li>Hindari gambar dengan terlalu banyak objek yang mengganggu.</li>
         </ul>
+      </div>
+      <div className="mt-6 text-center">
+        <button
+          onClick={onReset}
+          className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg shadow-md hover:bg-emerald-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50"
+        >
+          <Icon icon="reload" className="w-5 h-5" />
+          Muat Baru
+        </button>
       </div>
     </div>
   );

@@ -9,9 +9,10 @@ import PdfDocument from './PdfDocument';
 interface ResultDisplayProps {
   data: FoodData;
   imageBase64: string | null;
+  onReset: () => void;
 }
 
-const ResultDisplay: React.FC<ResultDisplayProps> = ({ data, imageBase64 }) => {
+const ResultDisplay: React.FC<ResultDisplayProps> = ({ data, imageBase64, onReset }) => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownloadPdf = async () => {
@@ -66,14 +67,23 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ data, imageBase64 }) => {
           <p className="text-slate-600 dark:text-slate-400">Hasil Deteksi:</p>
           <h2 className="text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight">{data.foodName}</h2>
         </div>
-        <button
-          onClick={handleDownloadPdf}
-          disabled={isDownloading}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg shadow-md hover:bg-emerald-600 transition-all duration-300 disabled:bg-slate-400 disabled:cursor-not-allowed transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50"
-        >
-          <Icon icon="download" className="w-5 h-5" />
-          {isDownloading ? 'Menyiapkan PDF...' : 'Unduh Hasil'}
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button
+              onClick={handleDownloadPdf}
+              disabled={isDownloading}
+              className="order-1 sm:order-2 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg shadow-md hover:bg-emerald-600 transition-all duration-300 disabled:bg-slate-400 disabled:cursor-not-allowed transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50"
+            >
+              <Icon icon="download" className="w-5 h-5" />
+              {isDownloading ? 'Menyiapkan PDF...' : 'Unduh Hasil'}
+            </button>
+            <button
+                onClick={onReset}
+                className="order-2 sm:order-1 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-100 text-slate-700 font-bold rounded-lg shadow-sm hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:ring-opacity-50"
+            >
+                <Icon icon="reload" className="w-5 h-5" />
+                Muat Baru
+            </button>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
